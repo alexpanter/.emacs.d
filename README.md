@@ -29,3 +29,4 @@ Currently this repository targets only development in C++ with minimal setup and
 * undo-tree
 * popup terminal
 * other clever tuhdo-features
+* NO gtags parsing of headers when point is in a comment!
