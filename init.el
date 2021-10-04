@@ -34,10 +34,28 @@
       scroll-preserve-screen-position nil)
 ;; toggle line highlighting in all buffers
 (global-hl-line-mode)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;
+;; NAVIGATION SETTINGS ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; winner-mode, easy switch between views
 (global-set-key (kbd "C-c <left>") 'winner-undo)
 (global-set-key (kbd "C-c <right>") 'winner-redo)
 (winner-mode t)
+;; window navigation
+(windmove-default-keybindings)
+;; buffer navigation
+(defun bufmove-default-keybindings (&optional modifier)
+  "Set up keybindings for switching between buffers in current window."
+  (interactive)
+  (unless modifier (setq modifier 'control))
+  (global-set-key (vector (list modifier 'left)) 'previous-buffer)
+  (global-set-key (vector (list modifier 'right)) 'next-buffer)
+  (global-set-key (kbd "C-<left>") 'previous-buffer)
+  (global-set-key (kbd "C-<right>") 'next-buffer)
+  )
+(bufmove-default-keybindings)
 
 
 ;;;;;;;;;;;;;;;
@@ -176,7 +194,7 @@ point reaches the beginning or end of the buffer, stop there."
 ;;;;;;;;;;;;;;;;;;;;;
 ;; C++ PROGRAMMING ;;
 ;;;;;;;;;;;;;;;;;;;;;
-(defun my-c-common-mode-hook ()
+(defun my-cpp-common-mode-hook ()
   (c-set-offset 'substatement-open 0)
   (c-set-offset 'inline-open 0)
   (c-set-offset 'comment-intro 0)
@@ -201,7 +219,33 @@ point reaches the beginning or end of the buffer, stop there."
 	    (setq c-basic-offset 4)
 	    )
 	  )
-(add-hook 'c++-mode-hook 'my-c-common-mode-hook)
+(add-hook 'c++-mode-hook 'my-cpp-common-mode-hook)
+
+
+;;;;;;;;;;;;;;;;;;;
+;; C PROGRAMMING ;;
+;;;;;;;;;;;;;;;;;;;
+(defvar my-custom-c-style "ninja")
+
+(defun my-c-mode-hook ()
+  (when (equal my-custom-c-style "ninja")
+    (setq-default c-basic-offset 4
+				  tab-width 4
+				  indent-tabs-mode t)
+    (c-set-offset 'substatement-open 0)
+    (c-set-offset 'comment-intro 0)
+    (c-set-offset 'defun-block-intro 4)
+    (c-set-offset 'statement-block-intro 4)
+    (c-set-offset 'substatement 4)
+    (c-set-offset 'topmost-intro 0)
+    (c-set-offset 'statement-cont 0)
+    (c-set-offset 'func-decl-cont 0)
+	(c-set-offset 'brace-list-open 0)
+	(c-set-offset 'brace-list-intro 4)
+    )
+  )
+(add-hook 'c-mode-hook 'my-c-mode-hook)
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;
@@ -233,26 +277,7 @@ point reaches the beginning or end of the buffer, stop there."
 (smart-tabs-insinuate 'c++)
 
 
-;;;;;;;;;;;;;;;;;;;;;;;
-;; WINDOW NAVIGATION ;;
-;;;;;;;;;;;;;;;;;;;;;;;
-(windmove-default-keybindings)
 
-
-;;;;;;;;;;;;;;;;;;;;;;;
-;; BUFFER NAVIGATION ;;
-;;;;;;;;;;;;;;;;;;;;;;;
-(defun bufmove-default-keybindings (&optional modifier)
-  "Set up keybindings for switching between buffers in current window."
-  (interactive)
-  (unless modifier (setq modifier 'control))
-  (global-set-key (vector (list modifier 'left)) 'previous-buffer)
-  (global-set-key (vector (list modifier 'right)) 'next-buffer)
-  (global-set-key (kbd "C-<left>") 'previous-buffer)
-  (global-set-key (kbd "C-<right>") 'next-buffer)
-  )
-
-(bufmove-default-keybindings)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
@@ -293,7 +318,9 @@ which buffer they want to kill."
   (define-key term-raw-map (kbd "C-1") 'zygospore-toggle-delete-other-windows)
   (define-key term-raw-map (kbd "C-2") 'split-window-below)
   (define-key term-raw-map (kbd "C-3") 'split-window-right)
-  (define-key term-mode-map (kbd "C-0") 'delete-window))
+  (define-key term-mode-map (kbd "C-0") 'delete-window)
+  (define-key term-raw-map (kbd "<C-left>") 'previous-buffer)
+  (define-key term-raw-map (kbd "<C-right>") 'next-buffer))
 (add-hook 'term-mode-hook 'my-term-setup t)
 (setq term-buffer-maximum-size 0)
 ;;
