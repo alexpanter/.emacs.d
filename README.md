@@ -8,6 +8,7 @@ Currently this repository targets only development in C and C++ with minimal set
 
 # TODO-list of desired features #
 
+* Term-mode with colors
 * Header-search auto-completion
 * Language-sensitive auto-completion
 * NO default flycheck!
