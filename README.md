@@ -11,7 +11,7 @@ Currently this repository targets only development in C++ with minimal setup and
 * Header-search auto-completion
 * Language-sensitive auto-completion
 * NO default flycheck!
-* optional flycheck (GCC, g++-11, enabled on a per-need basis)
+* optional flycheck (GCC, g++-20, enabled on a per-need basis)
 * Helm and Helm-gtags
 * tab-indentation (visually 4 spaces)
 * clean-aindent (Laptop setup)
