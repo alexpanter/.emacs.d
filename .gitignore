@@ -1,0 +1,7 @@
+# Ignore everything
+*
+
+# Selectively add files
+!.gitignore
+!init.el
+!custom/*
