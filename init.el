@@ -181,14 +181,15 @@ point reaches the beginning or end of the buffer, stop there."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; GENERAL PROGRAMMING SETTINGS ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(add-hook 'prog-mode-hook
-	  (lambda ()
-	    (setq show-trailing-whitespace 1)
-	    (text-scale-decrease 1)))
 (add-hook 'prog-mode-hook 'highlight-numbers-mode)
 (add-hook 'prog-mode-hook 'electric-pair-mode)
 (add-hook 'prog-mode-hook 'clean-aindent-mode)
 (add-hook 'prog-mode-hook 'hl-todo-mode)
+(add-hook 'prog-mode-hook
+	  (lambda ()
+	    (setq show-trailing-whitespace 1)
+	    (text-scale-decrease 1)
+	    (define-key global-map (kbd "RET") 'newline-and-indent)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;
