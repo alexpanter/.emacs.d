@@ -214,7 +214,6 @@ point reaches the beginning or end of the buffer, stop there."
   ;; TODO: (when not-nil 'user-init-file)
   (find-file user-init-file)
   )
-
 (global-set-key (kbd "<f12>") 'edit-init-file)
 
 
@@ -226,6 +225,7 @@ point reaches the beginning or end of the buffer, stop there."
   (local-set-key (kbd "C-c C-c") 'comment-or-uncomment-region)
   )
 (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
+
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; C++ PROGRAMMING ;;
