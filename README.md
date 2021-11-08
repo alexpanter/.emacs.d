@@ -15,7 +15,6 @@ Currently this repository targets only development in C and C++ with minimal set
 * optional flycheck (GCC, g++-20, enabled on a per-need basis)
 * Helm and Helm-gtags
 * tab-indentation (visually 4 spaces)
-* clean-aindent (Laptop setup)
 * Color theme (Desktop setup)
 * gdb-settings
 * custom winmove settings
@@ -27,7 +26,5 @@ Currently this repository targets only development in C and C++ with minimal set
 * on point show symbol signature in minibuffer
 * auto-completion list with jump-to-definition
 * documentation-string popup for symbol on mouse hover, or similar feature (company not ac)
-* undo-tree
-* popup terminal
 * other clever tuhdo-features
 * NO gtags parsing of headers when point is in a comment!
