@@ -66,7 +66,7 @@
 ;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
 ;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
 ;; cannot change 'helm-command-prefix-key' once 'helm-config' is loaded.
-(global-set-key (kbd "C-c h") 'helm-config-prefix)
+(global-set-key (kbd "C-c h") 'helm-command-prefix)
 (global-unset-key (kbd "C-x c"))
 ;; rebind tab to run persistent action
 (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
@@ -102,15 +102,29 @@
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 ;; helm-mini:
 (global-set-key (kbd "C-x b") 'helm-mini)
+;; Helm-semantic support.
+;; The command 'helm-semantic-or-imenu' can be useful for finding
+;; definitions inside a source file.
+;; 'helm-imenu' is bound to (C-c h i).
+(semantic-mode 1)
+(setq helm-semantic-fuzzy-match t
+      helm-imenu-fuzzy-match    t)
+(global-set-key (kbd "C-c h s") 'helm-semantic-or-imenu)
 ;; to enable fuzzy matching with helm-mini, add the following settings:
 (setq helm-buffers-fuzzy-matching t
-      helm-recentf-fuzzy-match    t)
+      helm-recentf-fuzzy-match    t
+      helm-locate-fuzzy-match     t)
 ;; helm-find-files - file navigation on steroids!
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
 ;; if the point is located on a folder path, C-x C-f will
 ;; start in that folder. (Use C-l C-r to navigate directories)
 ;; use arrow keys to navigate helm-find-files menu
 (setq helm-ff-lynx-style-map t)
+;; Better keymap for helm-occur.
+;; This is extremely useful and, opposed to semantic, searches for
+;; everything in file indiscriminate of language syntax.
+;; Matches are updated on the fly.
+(global-set-key (kbd "C-c h o") 'helm-occur)
 (helm-mode 1)
 
 
@@ -181,14 +195,15 @@ point reaches the beginning or end of the buffer, stop there."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; GENERAL PROGRAMMING SETTINGS ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(add-hook 'prog-mode-hook
-	  (lambda ()
-	    (setq show-trailing-whitespace 1)
-	    (text-scale-decrease 1)))
 (add-hook 'prog-mode-hook 'highlight-numbers-mode)
 (add-hook 'prog-mode-hook 'electric-pair-mode)
 (add-hook 'prog-mode-hook 'clean-aindent-mode)
 (add-hook 'prog-mode-hook 'hl-todo-mode)
+(add-hook 'prog-mode-hook
+	  (lambda ()
+	    (setq show-trailing-whitespace 1)
+	    (text-scale-decrease 1)
+	    (define-key global-map (kbd "RET") 'newline-and-indent)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;
