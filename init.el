@@ -191,6 +191,27 @@ point reaches the beginning or end of the buffer, stop there."
 (add-hook 'prog-mode-hook 'hl-todo-mode)
 
 
+;;;;;;;;;;;;;;;;;;;;;;
+;; LISP PROGRAMMING ;;
+;;;;;;;;;;;;;;;;;;;;;;
+(defun edit-init-file ()
+  (interactive)
+  ;; TODO: (when not-nil 'user-init-file)
+  (find-file user-init-file)
+  )
+
+(global-set-key (kbd "<f12>") 'edit-init-file)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; COMMON C AND C++ PROGRAMMING ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun my-c-mode-common-hook ()
+  "For use in both C and C++ major modes."
+  (local-set-key (kbd "C-c C-c") 'comment-or-uncomment-region)
+  )
+(add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
+
 ;;;;;;;;;;;;;;;;;;;;;
 ;; C++ PROGRAMMING ;;
 ;;;;;;;;;;;;;;;;;;;;;
@@ -354,6 +375,17 @@ which buffer they want to kill."
             (kill-buffer "*ansi-term*")
             (ansi-term term-cmd))
         (ansi-term term-cmd)))))
+
+(add-hook 'term-mode-hook
+	  (function
+	   (lambda ()
+	     (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")
+	     (setq-local mouse-yank-at-point t)
+	     (setq-local transient-mark-mode nil)
+	     (auto-fill-mode -1)
+	     (setq tab-width 8 ))))
+(add-hook 'term-mode
+	  (lambda nil (color-theme-buffer-local 'color-theme-black-on-gray (current-buffer))))
 
 (global-set-key (kbd "<f1>") 'visit-ansi-term)
 
