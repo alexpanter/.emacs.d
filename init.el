@@ -217,6 +217,33 @@ point reaches the beginning or end of the buffer, stop there."
 (global-set-key (kbd "<f12>") 'edit-init-file)
 
 
+;;;;;;;;;;;;;;;;;;;;;;;
+;; LATEX PROGRAMMING ;;
+;;;;;;;;;;;;;;;;;;;;;;;
+(defun my-latex-compile-fun ()
+  (interactive)
+  (defvar filename)
+  (setq filename (file-name-nondirectory buffer-file-name))
+  (setq compile-command (concat "pdflatex " filename))
+  ;; When this variable is non-nil, it will cause the Compilation mode
+  ;; commands to put point at the end of their output window, so that the
+  ;; end of output is always visible rather than the beginning.
+  (setq compilation-scroll-output t)
+  (call-interactively 'compile)
+  )
+(defun my-latex-mode-hook ()
+  (text-scale-decrease 1)
+  (hl-todo-mode t)
+  (clean-aindent-mode 0)
+  (setq electric-indent-inhibit 1)
+  (setq tex-indent-basic 0)
+  (setq tex-indent-item 0)
+  (setq show-trailing-whitespace 1)
+  (local-set-key (kbd "<f5>") 'my-latex-compile-fun)
+  )
+(add-hook 'latex-mode-hook 'my-latex-mode-hook)
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; COMMON C AND C++ PROGRAMMING ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -311,9 +338,6 @@ point reaches the beginning or end of the buffer, stop there."
 ;;;;;;;;;;;;;;;;;;;;;
 (smart-tabs-mode t)
 (smart-tabs-insinuate 'c++)
-
-
-
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
@@ -450,19 +474,15 @@ which buffer they want to kill."
  '(ansi-color-faces-vector
    [default default default italic underline success warning error])
  '(column-number-mode t)
- '(custom-enabled-themes (quote (wombat)))
+ '(custom-enabled-themes '(wombat))
  '(custom-safe-themes
-   (quote
-    ("8136cbb3b29b4c86ca3354d85005f527adcf9393b227980fc144a2c24ba63688" default)))
- '(flymake-error-bitmap
-   (quote
-    (flymake-double-exclamation-mark modus-theme-fringe-red)))
- '(flymake-note-bitmap (quote (exclamation-mark modus-theme-fringe-cyan)))
- '(flymake-warning-bitmap (quote (exclamation-mark modus-theme-fringe-yellow)))
- '(helm-completion-style (quote emacs))
+   '("8136cbb3b29b4c86ca3354d85005f527adcf9393b227980fc144a2c24ba63688" default))
+ '(flymake-error-bitmap '(flymake-double-exclamation-mark modus-theme-fringe-red))
+ '(flymake-note-bitmap '(exclamation-mark modus-theme-fringe-cyan))
+ '(flymake-warning-bitmap '(exclamation-mark modus-theme-fringe-yellow))
+ '(helm-completion-style 'emacs)
  '(hl-todo-keyword-faces
-   (quote
-    (("HOLD" . "#e5f040")
+   '(("HOLD" . "#e5f040")
      ("TODO" . "#feacd0")
      ("NEXT" . "#b6a0ff")
      ("THEM" . "#f78fe7")
@@ -478,24 +498,22 @@ which buffer they want to kill."
      ("FIXME" . "#ff9977")
      ("XXX+" . "#f4923b")
      ("REVIEW" . "#6ae4b9")
-     ("DEPRECATED" . "#aaeeee"))))
- '(ibuffer-deletion-face (quote dired-flagged))
- '(ibuffer-filter-group-name-face (quote dired-mark))
- '(ibuffer-marked-face (quote dired-marked))
- '(ibuffer-title-face (quote dired-header))
+     ("DEPRECATED" . "#aaeeee")))
+ '(ibuffer-deletion-face 'dired-flagged)
+ '(ibuffer-filter-group-name-face 'dired-mark)
+ '(ibuffer-marked-face 'dired-marked)
+ '(ibuffer-title-face 'dired-header)
  '(package-selected-packages
-   (quote
-    (glsl-mode helm hl-todo highlight-symbol lua-mode clean-aindent-mode highlight-numbers shell-pop smart-tabs-mode undo-tree modus-vivendi-theme)))
+   '(fsharp-mode glsl-mode helm hl-todo highlight-symbol lua-mode clean-aindent-mode highlight-numbers shell-pop smart-tabs-mode undo-tree modus-vivendi-theme))
+ '(send-mail-function 'mailclient-send-it)
  '(shell-pop-shell-type
-   (quote
-    ("ansi-term" "*ansi-term*"
+   '("ansi-term" "*ansi-term*"
      (lambda nil
-       (ansi-term shell-pop-term-shell)))))
+       (ansi-term shell-pop-term-shell))))
  '(vc-annotate-background nil)
  '(vc-annotate-background-mode nil)
  '(vc-annotate-color-map
-   (quote
-    ((20 . "#ff8059")
+   '((20 . "#ff8059")
      (40 . "#feacd0")
      (60 . "#f78fe7")
      (80 . "#f4923b")
@@ -512,7 +530,7 @@ which buffer they want to kill."
      (300 . "#33beff")
      (320 . "#72a4ff")
      (340 . "#00baf4")
-     (360 . "#b6a0ff"))))
+     (360 . "#b6a0ff")))
  '(vc-annotate-very-old-color nil)
  '(xterm-color-names
    ["#000000" "#ff8059" "#44bc44" "#eecc00" "#33beff" "#feacd0" "#00d3d0" "#a8a8a8"])
