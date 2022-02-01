@@ -5,3 +5,4 @@
 !.gitignore
 !init.el
 !custom/*
+!elpa/undo-tree-0.7.5/*
