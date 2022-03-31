@@ -3,18 +3,24 @@
 ;;;;;;;;;;;;;;
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives '("elpa" . "https://elpa.gnu.org/packages/"))
 ;; activate all the packages (in particular autoloads)
 (package-initialize)
 ;; fetch the list of packages available
 (unless package-archive-contents
   (package-refresh-contents))
+;; eliminate warning/error on deprecated cl package
+(setq byte-compile-warnings '(cl-functions))
 
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; GLOBAL SETTINGS ;;
 ;;;;;;;;;;;;;;;;;;;;;
 (blink-cursor-mode 0)
-(global-undo-tree-mode 1)
+(require 'undo-tree)
+(undo-tree-mode 1)
 (tool-bar-mode 0)
 (menu-bar-mode 0)
 (scroll-bar-mode 0)
