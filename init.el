@@ -183,6 +183,9 @@ point reaches the beginning or end of the buffer, stop there."
 
 (global-set-key (kbd "C-c w") 'whitespace-mode)
 
+;;(set-frame-font "Monaco 14")
+(set-face-attribute 'default nil :height 105)
+
 
 ;;;;;;;;;;;;;;;;;;;
 ;; UTF-8 EDITING ;;
