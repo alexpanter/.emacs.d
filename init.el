@@ -34,6 +34,7 @@
       scroll-preserve-screen-position nil)
 ;; toggle line highlighting in all buffers
 (global-hl-line-mode)
+(setq gc-cons-threshold (* 100 1024 1024))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -280,6 +281,7 @@ point reaches the beginning or end of the buffer, stop there."
 	    (setq indent-tabs-mode t)
 	    (setq tab-width 4)
 	    (setq c-basic-offset 4)
+		(highlight-doxygen-mode t)
 	    )
 	  )
 (add-hook 'c++-mode-hook 'my-cpp-common-mode-hook)
@@ -474,63 +476,70 @@ which buffer they want to kill."
  '(ansi-color-faces-vector
    [default default default italic underline success warning error])
  '(column-number-mode t)
- '(custom-enabled-themes '(wombat))
+ '(custom-enabled-themes (quote (wombat)))
  '(custom-safe-themes
-   '("8136cbb3b29b4c86ca3354d85005f527adcf9393b227980fc144a2c24ba63688" default))
- '(flymake-error-bitmap '(flymake-double-exclamation-mark modus-theme-fringe-red))
- '(flymake-note-bitmap '(exclamation-mark modus-theme-fringe-cyan))
- '(flymake-warning-bitmap '(exclamation-mark modus-theme-fringe-yellow))
- '(helm-completion-style 'emacs)
+   (quote
+	("8136cbb3b29b4c86ca3354d85005f527adcf9393b227980fc144a2c24ba63688" default)))
+ '(flymake-error-bitmap
+   (quote
+	(flymake-double-exclamation-mark modus-theme-fringe-red)))
+ '(flymake-note-bitmap (quote (exclamation-mark modus-theme-fringe-cyan)))
+ '(flymake-warning-bitmap (quote (exclamation-mark modus-theme-fringe-yellow)))
+ '(helm-completion-style (quote emacs))
  '(hl-todo-keyword-faces
-   '(("HOLD" . "#e5f040")
-     ("TODO" . "#feacd0")
-     ("NEXT" . "#b6a0ff")
-     ("THEM" . "#f78fe7")
-     ("PROG" . "#00d3d0")
-     ("OKAY" . "#4ae8fc")
-     ("DONT" . "#58dd13")
-     ("FAIL" . "#ff8059")
-     ("DONE" . "#44bc44")
-     ("NOTE" . "#f0ce43")
-     ("KLUDGE" . "#eecc00")
-     ("HACK" . "#eecc00")
-     ("TEMP" . "#ffcccc")
-     ("FIXME" . "#ff9977")
-     ("XXX+" . "#f4923b")
-     ("REVIEW" . "#6ae4b9")
-     ("DEPRECATED" . "#aaeeee")))
- '(ibuffer-deletion-face 'dired-flagged)
- '(ibuffer-filter-group-name-face 'dired-mark)
- '(ibuffer-marked-face 'dired-marked)
- '(ibuffer-title-face 'dired-header)
+   (quote
+	(("HOLD" . "#e5f040")
+	 ("TODO" . "#feacd0")
+	 ("NEXT" . "#b6a0ff")
+	 ("THEM" . "#f78fe7")
+	 ("PROG" . "#00d3d0")
+	 ("OKAY" . "#4ae8fc")
+	 ("DONT" . "#58dd13")
+	 ("FAIL" . "#ff8059")
+	 ("DONE" . "#44bc44")
+	 ("NOTE" . "#f0ce43")
+	 ("KLUDGE" . "#eecc00")
+	 ("HACK" . "#eecc00")
+	 ("TEMP" . "#ffcccc")
+	 ("FIXME" . "#ff9977")
+	 ("XXX+" . "#f4923b")
+	 ("REVIEW" . "#6ae4b9")
+	 ("DEPRECATED" . "#aaeeee"))))
+ '(ibuffer-deletion-face (quote dired-flagged))
+ '(ibuffer-filter-group-name-face (quote dired-mark))
+ '(ibuffer-marked-face (quote dired-marked))
+ '(ibuffer-title-face (quote dired-header))
  '(package-selected-packages
-   '(fsharp-mode glsl-mode helm hl-todo highlight-symbol lua-mode clean-aindent-mode highlight-numbers shell-pop smart-tabs-mode undo-tree modus-vivendi-theme))
- '(send-mail-function 'mailclient-send-it)
+   (quote
+	(highlight-doxygen fsharp-mode glsl-mode helm hl-todo highlight-symbol lua-mode clean-aindent-mode highlight-numbers shell-pop smart-tabs-mode undo-tree modus-vivendi-theme)))
+ '(send-mail-function (quote mailclient-send-it))
  '(shell-pop-shell-type
-   '("ansi-term" "*ansi-term*"
-     (lambda nil
-       (ansi-term shell-pop-term-shell))))
+   (quote
+	("ansi-term" "*ansi-term*"
+	 (lambda nil
+	   (ansi-term shell-pop-term-shell)))))
  '(vc-annotate-background nil)
  '(vc-annotate-background-mode nil)
  '(vc-annotate-color-map
-   '((20 . "#ff8059")
-     (40 . "#feacd0")
-     (60 . "#f78fe7")
-     (80 . "#f4923b")
-     (100 . "#eecc00")
-     (120 . "#e5f040")
-     (140 . "#f8dec0")
-     (160 . "#bfebe0")
-     (180 . "#44bc44")
-     (200 . "#58dd13")
-     (220 . "#6ae4b9")
-     (240 . "#4ae8fc")
-     (260 . "#00d3d0")
-     (280 . "#c6eaff")
-     (300 . "#33beff")
-     (320 . "#72a4ff")
-     (340 . "#00baf4")
-     (360 . "#b6a0ff")))
+   (quote
+	((20 . "#ff8059")
+	 (40 . "#feacd0")
+	 (60 . "#f78fe7")
+	 (80 . "#f4923b")
+	 (100 . "#eecc00")
+	 (120 . "#e5f040")
+	 (140 . "#f8dec0")
+	 (160 . "#bfebe0")
+	 (180 . "#44bc44")
+	 (200 . "#58dd13")
+	 (220 . "#6ae4b9")
+	 (240 . "#4ae8fc")
+	 (260 . "#00d3d0")
+	 (280 . "#c6eaff")
+	 (300 . "#33beff")
+	 (320 . "#72a4ff")
+	 (340 . "#00baf4")
+	 (360 . "#b6a0ff"))))
  '(vc-annotate-very-old-color nil)
  '(xterm-color-names
    ["#000000" "#ff8059" "#44bc44" "#eecc00" "#33beff" "#feacd0" "#00d3d0" "#a8a8a8"])
@@ -541,4 +550,6 @@ which buffer they want to kill."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(highlight-doxygen-code-block ((t nil)))
+ '(highlight-doxygen-comment ((t (:inherit font-lock-doc-face))))
  '(hl-line ((t (:background "gray17")))))
