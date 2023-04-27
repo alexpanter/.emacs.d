@@ -5,6 +5,30 @@ Clone this repository at the appropriate place for the `.emacs.d/` directory and
 
 Currently this repository targets only development in C and C++ with minimal setup and support.
 
+# Commands to remember
+
+With Helm and sematic, there's a number of really cool commands:
+
+- `C-x C-b` for ibuffer
+- `C-c h` for helm prefix
+- `C-c h m` for man pages
+- `C-c h s` for browsing semantic tags
+- `C-c h o` for helm-occur
+-
+- `M-s o` for static occur in another buffer (very useful)
+- `M-s h l` for highlight lines matching regex
+- `M-s h u` for un-highlight lines matching regex
+
+If `locate` and `updatedb` are installed (likely same package), then Helm can be
+used to locate any file on machine. Procedure:
+```
+sudo updatedb --prunepaths='/run/user/1000 /run/user/127'
+```
+`prunepaths` may be necessary for broken permissions. Next, locate can be used
+within Emacs:
+-  `C-c h l` for locating file matching pattern
+- `C-c S-x` for opening the selected file externally in default application
+
 
 # TODO-list of desired features #
 
