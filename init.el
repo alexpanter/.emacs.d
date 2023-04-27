@@ -9,6 +9,10 @@
 (unless package-archive-contents
   (package-refresh-contents))
 
+;; install:
+;; helm highlight-symbol highlight-numbers clean-aindent-mode hl-todo
+;; glsl-mode smart-tabs-mode shell-pop
+
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; GLOBAL SETTINGS ;;
@@ -57,13 +61,15 @@
   (global-set-key (kbd "C-<right>") 'next-buffer)
   )
 (bufmove-default-keybindings)
+;; Replace `list-buffers' with `ibuffer', which is a superior alternative
+(global-set-key (kbd "C-x C-b") 'ibuffer)
 
 
 ;;;;;;;;;;;;;;;
 ;; HELM-MODE ;;
 ;;;;;;;;;;;;;;;
 (require 'helm)
-(require 'helm-config)
+;; (require 'helm-config) ;; this was removed from helm package in later versions
 ;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
 ;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
 ;; cannot change 'helm-command-prefix-key' once 'helm-config' is loaded.
@@ -184,7 +190,26 @@ point reaches the beginning or end of the buffer, stop there."
 (global-set-key (kbd "C-c w") 'whitespace-mode)
 
 ;;(set-frame-font "Monaco 14")
-(set-face-attribute 'default nil :height 105)
+(set-face-attribute 'default nil :height 105) ;; was 105
+;; (set-face-attribute 'default nil :height 170)
+;; (set-face-attribute 'default nil :height 150)
+
+(defvar face-attribute-height 125
+  "Default font face height when Emacs starts.")
+
+(defun face-attribute-height-increase ()
+  (interactive)
+  (setq face-attribute-height (+ face-attribute-height 5))
+  (set-face-attribute 'default nil :height face-attribute-height)
+  )
+(defun face-attribute-height-decrease ()
+  (interactive)
+  (setq face-attribute-height (- face-attribute-height 5))
+  (set-face-attribute 'default nil :height face-attribute-height)
+  )
+
+(define-key global-map (kbd "C-+") 'face-attribute-height-increase)
+(define-key global-map (kbd "C--") 'face-attribute-height-decrease)
 
 
 ;;;;;;;;;;;;;;;;;;;
@@ -345,6 +370,15 @@ point reaches the beginning or end of the buffer, stop there."
 (smart-tabs-insinuate 'c++)
 
 
+;;;;;;;;;;;;;;;
+;; TEXT-MODE ;;
+;;;;;;;;;;;;;;;
+(defun  my-text-mode-hook ()
+  (hl-todo-mode t)
+  )
+
+(add-hook 'text-mode-hook 'my-text-mode-hook)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; KILL ACTIVE BUFFER ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;
@@ -479,70 +513,105 @@ which buffer they want to kill."
  '(ansi-color-faces-vector
    [default default default italic underline success warning error])
  '(column-number-mode t)
- '(custom-enabled-themes (quote (wombat)))
+ '(custom-enabled-themes '(wombat))
  '(custom-safe-themes
-   (quote
-	("8136cbb3b29b4c86ca3354d85005f527adcf9393b227980fc144a2c24ba63688" default)))
- '(flymake-error-bitmap
-   (quote
-	(flymake-double-exclamation-mark modus-theme-fringe-red)))
- '(flymake-note-bitmap (quote (exclamation-mark modus-theme-fringe-cyan)))
- '(flymake-warning-bitmap (quote (exclamation-mark modus-theme-fringe-yellow)))
- '(helm-completion-style (quote emacs))
+   '("8136cbb3b29b4c86ca3354d85005f527adcf9393b227980fc144a2c24ba63688" default))
+ '(flymake-error-bitmap '(flymake-double-exclamation-mark modus-theme-fringe-red))
+ '(flymake-note-bitmap '(exclamation-mark modus-theme-fringe-cyan))
+ '(flymake-warning-bitmap '(exclamation-mark modus-theme-fringe-yellow))
+ '(helm-completion-style 'emacs)
  '(hl-todo-keyword-faces
-   (quote
-	(("HOLD" . "#e5f040")
-	 ("TODO" . "#feacd0")
-	 ("NEXT" . "#b6a0ff")
-	 ("THEM" . "#f78fe7")
-	 ("PROG" . "#00d3d0")
-	 ("OKAY" . "#4ae8fc")
-	 ("DONT" . "#58dd13")
-	 ("FAIL" . "#ff8059")
-	 ("DONE" . "#44bc44")
-	 ("NOTE" . "#f0ce43")
-	 ("KLUDGE" . "#eecc00")
-	 ("HACK" . "#eecc00")
-	 ("TEMP" . "#ffcccc")
-	 ("FIXME" . "#ff9977")
-	 ("XXX+" . "#f4923b")
-	 ("REVIEW" . "#6ae4b9")
-	 ("DEPRECATED" . "#aaeeee"))))
- '(ibuffer-deletion-face (quote dired-flagged))
- '(ibuffer-filter-group-name-face (quote dired-mark))
- '(ibuffer-marked-face (quote dired-marked))
- '(ibuffer-title-face (quote dired-header))
+   '(("HOLD" . "#e5f040")
+     ("TODO" . "#feacd0")
+     ("NEXT" . "#b6a0ff")
+     ("THEM" . "#f78fe7")
+     ("PROG" . "#00d3d0")
+     ("OKAY" . "#4ae8fc")
+     ("DONT" . "#58dd13")
+     ("FAIL" . "#ff8059")
+     ("DONE" . "#44bc44")
+     ("NOTE" . "#f0ce43")
+     ("KLUDGE" . "#eecc00")
+     ("HACK" . "#eecc00")
+     ("TEMP" . "#ffcccc")
+     ("FIXME" . "#ff9977")
+     ("XXX+" . "#f4923b")
+     ("REVIEW" . "#6ae4b9")
+     ("DEPRECATED" . "#aaeeee")))
+ '(ibuffer-deletion-face 'dired-flagged)
+ '(ibuffer-filter-group-name-face 'dired-mark)
+ '(ibuffer-marked-face 'dired-marked)
+ '(ibuffer-saved-filter-groups
+   '(("vtek_headers"
+      ("headers"
+       (filename . ".hpp"))
+      ("elisp"
+       (used-mode . emacs-lisp-mode))
+      ("cpp"
+       (used-mode . c++-mode)))))
+ '(ibuffer-saved-filters
+   '(("programming"
+      (or
+       (derived-mode . prog-mode)
+       (mode . ess-mode)
+       (mode . compilation-mode)))
+     ("text document"
+      (and
+       (derived-mode . text-mode)
+       (not
+	(starred-name))))
+     ("TeX"
+      (or
+       (derived-mode . tex-mode)
+       (mode . latex-mode)
+       (mode . context-mode)
+       (mode . ams-tex-mode)
+       (mode . bibtex-mode)))
+     ("web"
+      (or
+       (derived-mode . sgml-mode)
+       (derived-mode . css-mode)
+       (mode . javascript-mode)
+       (mode . js2-mode)
+       (mode . scss-mode)
+       (derived-mode . haml-mode)
+       (mode . sass-mode)))
+     ("gnus"
+      (or
+       (mode . message-mode)
+       (mode . mail-mode)
+       (mode . gnus-group-mode)
+       (mode . gnus-summary-mode)
+       (mode . gnus-article-mode)))))
+ '(ibuffer-title-face 'dired-header)
  '(package-selected-packages
-   (quote
-	(highlight-doxygen fsharp-mode glsl-mode helm hl-todo highlight-symbol lua-mode clean-aindent-mode highlight-numbers shell-pop smart-tabs-mode undo-tree modus-vivendi-theme)))
- '(send-mail-function (quote mailclient-send-it))
+   '(wfnames highlight-doxygen fsharp-mode glsl-mode helm hl-todo highlight-symbol lua-mode clean-aindent-mode highlight-numbers shell-pop smart-tabs-mode undo-tree modus-vivendi-theme))
+ '(send-mail-function 'mailclient-send-it)
  '(shell-pop-shell-type
-   (quote
-	("ansi-term" "*ansi-term*"
-	 (lambda nil
-	   (ansi-term shell-pop-term-shell)))))
+   '("ansi-term" "*ansi-term*"
+     (lambda nil
+       (ansi-term shell-pop-term-shell))))
  '(vc-annotate-background nil)
  '(vc-annotate-background-mode nil)
  '(vc-annotate-color-map
-   (quote
-	((20 . "#ff8059")
-	 (40 . "#feacd0")
-	 (60 . "#f78fe7")
-	 (80 . "#f4923b")
-	 (100 . "#eecc00")
-	 (120 . "#e5f040")
-	 (140 . "#f8dec0")
-	 (160 . "#bfebe0")
-	 (180 . "#44bc44")
-	 (200 . "#58dd13")
-	 (220 . "#6ae4b9")
-	 (240 . "#4ae8fc")
-	 (260 . "#00d3d0")
-	 (280 . "#c6eaff")
-	 (300 . "#33beff")
-	 (320 . "#72a4ff")
-	 (340 . "#00baf4")
-	 (360 . "#b6a0ff"))))
+   '((20 . "#ff8059")
+     (40 . "#feacd0")
+     (60 . "#f78fe7")
+     (80 . "#f4923b")
+     (100 . "#eecc00")
+     (120 . "#e5f040")
+     (140 . "#f8dec0")
+     (160 . "#bfebe0")
+     (180 . "#44bc44")
+     (200 . "#58dd13")
+     (220 . "#6ae4b9")
+     (240 . "#4ae8fc")
+     (260 . "#00d3d0")
+     (280 . "#c6eaff")
+     (300 . "#33beff")
+     (320 . "#72a4ff")
+     (340 . "#00baf4")
+     (360 . "#b6a0ff")))
  '(vc-annotate-very-old-color nil)
  '(xterm-color-names
    ["#000000" "#ff8059" "#44bc44" "#eecc00" "#33beff" "#feacd0" "#00d3d0" "#a8a8a8"])
