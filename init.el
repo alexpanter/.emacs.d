@@ -247,13 +247,25 @@ point reaches the beginning or end of the buffer, stop there."
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;
+;; CMAKE PROGRAMMING ;;
+;;;;;;;;;;;;;;;;;;;;;;;
+(defun my-cmake-mode-hook ()
+  (setq cmake-tab-width 4)
+  (setq indent-tabs-mode nil)
+  )
+(add-hook 'cmake-mode-hook 'my-cmake-mode-hook)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;
 ;; LATEX PROGRAMMING ;;
 ;;;;;;;;;;;;;;;;;;;;;;;
 (defun my-latex-compile-fun ()
   (interactive)
   (defvar filename)
   (setq filename (file-name-nondirectory buffer-file-name))
-  (setq compile-command (concat "pdflatex " filename))
+  ;; TODO: Check if `latexrun' is available on the system, and default to that!
+  (setq compile-command (concat "latexrun " filename))
+  ;(setq compile-command (concat "pdflatex " filename))
   ;; When this variable is non-nil, it will cause the Compilation mode
   ;; commands to put point at the end of their output window, so that the
   ;; end of output is always visible rather than the beginning.
@@ -286,6 +298,19 @@ point reaches the beginning or end of the buffer, stop there."
 ;;;;;;;;;;;;;;;;;;;;;
 ;; C++ PROGRAMMING ;;
 ;;;;;;;;;;;;;;;;;;;;;
+(defun my-cpp-compile-fun ()
+  (interactive)
+  (defvar filename)
+  (setq filename (file-name-nondirectory buffer-file-name))
+  (setq comp-flags "-std=c++20 -Wall ")
+  (setq output (concat "-o " (file-name-sans-extension filename) " "))
+  ;; When this variable is non-nil, it will cause the Compilation mode
+  ;; commands to put point at the end of their output window, so that the
+  ;; end of output is always visible rather than the beginning.
+  (setq compile-command (concat "g++-12 " comp-flags output filename))
+  (setq compilation-scroll-output t)
+  (call-interactively 'compile)
+  )
 (defun my-cpp-common-mode-hook ()
   (c-set-offset 'substatement-open 0)
   (c-set-offset 'inline-open 0)
@@ -309,7 +334,8 @@ point reaches the beginning or end of the buffer, stop there."
 	    (setq indent-tabs-mode t)
 	    (setq tab-width 4)
 	    (setq c-basic-offset 4)
-		(highlight-doxygen-mode t)
+	    (highlight-doxygen-mode t)
+	    (local-set-key (kbd "<f5>") 'my-cpp-compile-fun)
 	    )
 	  )
 (add-hook 'c++-mode-hook 'my-cpp-common-mode-hook)
