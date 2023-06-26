@@ -11,7 +11,8 @@
 
 ;; install:
 ;; helm highlight-symbol highlight-numbers clean-aindent-mode hl-todo
-;; glsl-mode smart-tabs-mode shell-pop
+;; glsl-mode smart-tabs-mode shell-pop volatile-highlights company
+;; company-c-haders expand-region
 
 
 ;;;;;;;;;;;;;;;;;;;;;
@@ -39,6 +40,13 @@
 ;; toggle line highlighting in all buffers
 (global-hl-line-mode)
 (setq gc-cons-threshold (* 100 1024 1024))
+;; scroll 5 lines when using the mouse wheel
+;; Apparently, Emacs 28 defaults this to 1.
+(setq mouse-wheel-scroll-amount '(5))
+;; Highlights changes to the buffer caused by copy/paste commands.
+;; Useful together with `undo-trees' package.
+(require 'volatile-highlights)
+(volatile-highlights-mode t)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -135,6 +143,61 @@
 (helm-mode 1)
 
 
+;;;;;;;;;;;;;;;;;;
+;; COMPANY-MODE ;;
+;;;;;;;;;;;;;;;;;;
+(require 'company)
+(add-hook 'after-init-hook 'global-company-mode)
+(require 'company-c-headers)
+(add-to-list 'company-backends 'company-c-headers)
+(add-to-list 'company-c-headers-path-system "/usr/include/c++/13/")
+;; Provided `clang' is installed on the system (TODO: Check!), then
+;; we can add it as a backend for `company' to retrieve completion candidates.
+;; NOTE: Remove `company-semantic' as it will otherwise have a higher priority.
+;; TODO: Should we add `sompany-semantic' as a fallback?
+
+;; TODO: Since `company-clang' seems broken, removing `semantic' completely
+;; annihilates auto-completion. :/
+;;(setq company-backends (delete 'company-semantic company-backends))
+
+;;(add-to-list 'company-backends '(company-clang company-semantic))
+(add-to-list 'company-backends 'company-clang)
+;; TODO: This keybinding messes up the indentation usually done with TAB.
+;;(define-key company-mode-map  [(tab)] 'company-complete)
+(setq company-clang-executable "clang-16")
+
+;; company-clang could not be initialized.
+;; company found no clang executable.
+
+;; TODO: flycheck?
+;;;;;;;;;;;;;;;;;;;
+;; FLYCHECK-MODE ;;
+;;;;;;;;;;;;;;;;;;;
+;; (require 'flycheck)
+;; (add-hook 'prog-mode-hook
+;; 	  (lambda()
+;; 	    (flycheck-mode t)
+;; 	    (setq flycheck-clang-language-standard "20")))
+
+;;;;;;;;;;;;;;;;;
+;; GGTAGS-MODE ;;
+;;;;;;;;;;;;;;;;;
+(setq
+ helm-gtags-ignore-case t
+ helm-gtags-auto-update t
+ helm-gtags-use-input-at-cursor t
+ helm-gtags-pulse-at-cursor t
+ helm-gtags-prefix-key "\C-cg"
+ helm-gtags-suggested-key-mapping t
+ )
+(require 'helm-gtags)
+;; Enable helm-gtags for desired languages
+(add-hook 'c-mode-common-hook
+	  (lambda ()
+	    (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
+	      (helm-gtags-mode 1))))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; BASIC TEXT EDITING ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;
@@ -210,6 +273,10 @@ point reaches the beginning or end of the buffer, stop there."
 
 (define-key global-map (kbd "C-+") 'face-attribute-height-increase)
 (define-key global-map (kbd "C--") 'face-attribute-height-decrease)
+
+;; Expand selected region incrementally
+(require 'expand-region)
+(global-set-key (kbd "M-m") 'er/expand-region)
 
 
 ;;;;;;;;;;;;;;;;;;;
@@ -548,97 +615,118 @@ which buffer they want to kill."
  '(helm-completion-style 'emacs)
  '(hl-todo-keyword-faces
    '(("HOLD" . "#e5f040")
-     ("TODO" . "#feacd0")
-     ("NEXT" . "#b6a0ff")
-     ("THEM" . "#f78fe7")
-     ("PROG" . "#00d3d0")
-     ("OKAY" . "#4ae8fc")
-     ("DONT" . "#58dd13")
-     ("FAIL" . "#ff8059")
-     ("DONE" . "#44bc44")
-     ("NOTE" . "#f0ce43")
-     ("KLUDGE" . "#eecc00")
-     ("HACK" . "#eecc00")
-     ("TEMP" . "#ffcccc")
-     ("FIXME" . "#ff9977")
-     ("XXX+" . "#f4923b")
-     ("REVIEW" . "#6ae4b9")
-     ("DEPRECATED" . "#aaeeee")))
+	 ("TODO" . "#feacd0")
+	 ("NEXT" . "#b6a0ff")
+	 ("THEM" . "#f78fe7")
+	 ("PROG" . "#00d3d0")
+	 ("OKAY" . "#4ae8fc")
+	 ("DONT" . "#58dd13")
+	 ("FAIL" . "#ff8059")
+	 ("DONE" . "#44bc44")
+	 ("NOTE" . "#f0ce43")
+	 ("KLUDGE" . "#eecc00")
+	 ("HACK" . "#eecc00")
+	 ("TEMP" . "#ffcccc")
+	 ("FIXME" . "#ff9977")
+	 ("XXX+" . "#f4923b")
+	 ("REVIEW" . "#6ae4b9")
+	 ("DEPRECATED" . "#aaeeee")))
  '(ibuffer-deletion-face 'dired-flagged)
  '(ibuffer-filter-group-name-face 'dired-mark)
  '(ibuffer-marked-face 'dired-marked)
  '(ibuffer-saved-filter-groups
    '(("vtek_headers"
-      ("headers"
-       (filename . ".hpp"))
-      ("elisp"
-       (used-mode . emacs-lisp-mode))
-      ("cpp"
-       (used-mode . c++-mode)))))
+	  ("headers"
+	   (filename . ".hpp"))
+	  ("elisp"
+	   (used-mode . emacs-lisp-mode))
+	  ("cpp"
+	   (used-mode . c++-mode)))))
  '(ibuffer-saved-filters
    '(("programming"
-      (or
-       (derived-mode . prog-mode)
-       (mode . ess-mode)
-       (mode . compilation-mode)))
-     ("text document"
-      (and
-       (derived-mode . text-mode)
-       (not
-	(starred-name))))
-     ("TeX"
-      (or
-       (derived-mode . tex-mode)
-       (mode . latex-mode)
-       (mode . context-mode)
-       (mode . ams-tex-mode)
-       (mode . bibtex-mode)))
-     ("web"
-      (or
-       (derived-mode . sgml-mode)
-       (derived-mode . css-mode)
-       (mode . javascript-mode)
-       (mode . js2-mode)
-       (mode . scss-mode)
-       (derived-mode . haml-mode)
-       (mode . sass-mode)))
-     ("gnus"
-      (or
-       (mode . message-mode)
-       (mode . mail-mode)
-       (mode . gnus-group-mode)
-       (mode . gnus-summary-mode)
-       (mode . gnus-article-mode)))))
+	  (or
+	   (derived-mode . prog-mode)
+	   (mode . ess-mode)
+	   (mode . compilation-mode)))
+	 ("text document"
+	  (and
+	   (derived-mode . text-mode)
+	   (not
+		(starred-name))))
+	 ("TeX"
+	  (or
+	   (derived-mode . tex-mode)
+	   (mode . latex-mode)
+	   (mode . context-mode)
+	   (mode . ams-tex-mode)
+	   (mode . bibtex-mode)))
+	 ("web"
+	  (or
+	   (derived-mode . sgml-mode)
+	   (derived-mode . css-mode)
+	   (mode . javascript-mode)
+	   (mode . js2-mode)
+	   (mode . scss-mode)
+	   (derived-mode . haml-mode)
+	   (mode . sass-mode)))
+	 ("gnus"
+	  (or
+	   (mode . message-mode)
+	   (mode . mail-mode)
+	   (mode . gnus-group-mode)
+	   (mode . gnus-summary-mode)
+	   (mode . gnus-article-mode)))))
  '(ibuffer-title-face 'dired-header)
  '(package-selected-packages
-   '(wfnames highlight-doxygen fsharp-mode glsl-mode helm hl-todo highlight-symbol lua-mode clean-aindent-mode highlight-numbers shell-pop smart-tabs-mode undo-tree modus-vivendi-theme))
+   '(flycheck company-c-headers helm-gtags expand-region company volatile-highlights ggtags cmake-mode wfnames highlight-doxygen fsharp-mode glsl-mode helm hl-todo highlight-symbol lua-mode clean-aindent-mode highlight-numbers shell-pop smart-tabs-mode undo-tree modus-vivendi-theme))
+ '(safe-local-variable-values
+   '((eval semantic-add-system-include "/home/gg/dev/vclab-vtek/include/vtek/")
+	 (eval semantic-add-system-include . "/home/gg/dev/vclab-vtek/include/vtek/")
+	 (eval message "Loading .dir-locals.el")
+	 (eval message "HEELELELFLELELEL")
+	 (company-c-headers-path-user "-I/home/gg/dev/vclab-vtek/include/vtek/" "-I/home/gg/dev/vclab-vtek/external/spdlog/")
+	 (semantic-add-system-include . "/home/gg/dev/vclab-vtek/include/vtek/")
+	 (semantic-add-system-include "/home/gg/dev/vclab-vtek/include/vtek/")
+	 (semantic-dependency-system-include-path quote
+											  (semantic-dependency-system-include-path "/home/gg/dev/vclab-vtek/include/vtek/"))
+	 (semantic-dependency-system-include-path 'semantic-dependency-system-include-path "/home/gg/dev/vclab-vtek/include/vtek/")
+	 (semantic-dependency-system-include-path add-to-list 'semantic-dependency-system-include-path "/home/gg/dev/vclab-vtek/include/vtek/")
+	 (semantic-dependency-system-include-path semantic-add-system-include "/home/gg/dev/vclab-vtek/include/vtek/")
+	 (semantic-dependency-system-include-path "/home/gg/dev/vclab-vtek/include/vtek/")
+	 (semantic-dependency-system-include-path . "/home/gg/dev/vclab-vtek/include/vtek/")
+	 (company-c-headers-path-system "-I/home/gg/dev/vclab-vtek/include/vtek/" "-I/home/gg/dev/vclab-vtek/external/spdlog/")
+	 (company-clang-arguments "-I/home/gg/dev/vclab-vtek/include/vtek/" "-I/home/gg/dev/vclab-vtek/external/spdlog/")
+	 (company-clang-arguments "-I/home/gg/dev/vclab-vtek/include/vtek/" "-/home/gg/dev/vclab-vtek/external/spdlog/")
+	 (company-clang-arguments "-I/home/gg/dev/vclab-vtek/include/vtek/" "-/home/gg/dev/vclab-vtek/external/spdlog/.")
+	 (company-clang-arguments "-Iinclude/vtek" "-Iexternal/spdlog/include")))
  '(send-mail-function 'mailclient-send-it)
  '(shell-pop-shell-type
    '("ansi-term" "*ansi-term*"
-     (lambda nil
-       (ansi-term shell-pop-term-shell))))
+	 (lambda nil
+	   (ansi-term shell-pop-term-shell))))
  '(vc-annotate-background nil)
  '(vc-annotate-background-mode nil)
  '(vc-annotate-color-map
    '((20 . "#ff8059")
-     (40 . "#feacd0")
-     (60 . "#f78fe7")
-     (80 . "#f4923b")
-     (100 . "#eecc00")
-     (120 . "#e5f040")
-     (140 . "#f8dec0")
-     (160 . "#bfebe0")
-     (180 . "#44bc44")
-     (200 . "#58dd13")
-     (220 . "#6ae4b9")
-     (240 . "#4ae8fc")
-     (260 . "#00d3d0")
-     (280 . "#c6eaff")
-     (300 . "#33beff")
-     (320 . "#72a4ff")
-     (340 . "#00baf4")
-     (360 . "#b6a0ff")))
+	 (40 . "#feacd0")
+	 (60 . "#f78fe7")
+	 (80 . "#f4923b")
+	 (100 . "#eecc00")
+	 (120 . "#e5f040")
+	 (140 . "#f8dec0")
+	 (160 . "#bfebe0")
+	 (180 . "#44bc44")
+	 (200 . "#58dd13")
+	 (220 . "#6ae4b9")
+	 (240 . "#4ae8fc")
+	 (260 . "#00d3d0")
+	 (280 . "#c6eaff")
+	 (300 . "#33beff")
+	 (320 . "#72a4ff")
+	 (340 . "#00baf4")
+	 (360 . "#b6a0ff")))
  '(vc-annotate-very-old-color nil)
+ '(warning-suppress-types '((comp) (comp)))
  '(xterm-color-names
    ["#000000" "#ff8059" "#44bc44" "#eecc00" "#33beff" "#feacd0" "#00d3d0" "#a8a8a8"])
  '(xterm-color-names-bright
